@@ -1,0 +1,14 @@
+{
+  "name": "llm-config-runner",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node index.mjs",
+    "validate": "node validate.mjs",
+    "summary": "node summary.mjs"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "express": "^4.19.2"
+  }
+}

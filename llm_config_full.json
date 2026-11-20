@@ -1,0 +1,111 @@
+// llm_config_full.js
+// Paste your raw blob (exactly as you copied it) into RAW_DATA below.
+// This module will decode, extract, and parse it into a clean JS object.
+
+import config from "./llm_config_full.js";
+
+console.log("Loaded config keys:", Object.keys(config));
+const config = require("./llm_config_full.js");
+console.log("Loaded config keys:", Object.keys(config));
+
+
+const RAW_DATA = `
+<!-- paste EVERYTHING between (and including) the <script id="wf-initial-data"> ... </script>
+     or the whole snippet you pasted earlier -->
+`;
+
+// --- helpers ---------------------------------------------------------------
+
+function stripTags(s) {
+  // remove any <script>...</script> wrappers + other html tags
+  return s
+    .replace(/<script[^>]*>/gi, "")
+    .replace(/<\/script>/gi, "")
+    .replace(/<[^>]+>/g, "");
+}
+
+function htmlDecodeEntities(s) {
+  // fast path common entities first
+  const table = {
+    "&quot;": '"',
+    "&amp;": "&",
+    "&lt;": "<",
+    "&gt;": ">",
+    "&#39;": "'",
+  };
+  return s.replace(/&quot;|&amp;|&lt;|&gt;|&#39;/g, (m) => table[m] || m);
+}
+
+function extractJsonString(s) {
+  // Find first '{' and its matching last '}' to isolate the JSON object
+  const first = s.indexOf("{");
+  const last = s.lastIndexOf("}");
+  if (first === -1 || last === -1 || last <= first) {
+    throw new Error("Could not locate a JSON object in the provided blob.");
+  }
+  return s.slice(first, last + 1);
+}
+
+function safeParseJSON(s) {
+  try {
+    return JSON.parse(s);
+  } catch (err) {
+    // If the JSON was already decoded but still has stray commas or invalid bits,
+    // give a clearer error pointer.
+    const snippet = s.slice(0, 4000); // cap for readability
+    const msg =
+      (err && err.message) || "Unknown JSON parse error";
+    throw new Error(
+      `Failed to parse JSON. ${msg}\n\nFirst 4000 chars for debugging:\n${snippet}\n`
+    );
+  }
+}
+
+// --- main parse pipeline ---------------------------------------------------
+
+function buildConfigFromRaw(raw) {
+  if (!raw || !raw.trim()) {
+    throw new Error("RAW_DATA is empty. Paste your original blob into RAW_DATA.");
+  }
+  const noTags = stripTags(raw);
+  // The blob usually contains JS around the JSON; decode entities first,
+  // then isolate the largest {...} block (the config object).
+  const decoded = htmlDecodeEntities(noTags);
+  const jsonString = extractJsonString(decoded);
+  return safeParseJSON(jsonString);
+}
+
+// Parse eagerly on module load so importers just get the object.
+let config;
+try {
+  config = buildConfigFromRaw(RAW_DATA);
+} catch (e) {
+  // If you prefer to fail hard, rethrow. For dev friendliness we keep the error
+  // but attach a helpful placeholder object so your app doesn't explode instantly.
+  console.error("[llm_config_full] " + e.message);
+  config = {
+    __error__: String(e.message),
+    __hint__:
+      "Open llm_config_full.js, paste your full raw snippet into RAW_DATA (between the backticks), save, and reload.",
+  };
+}
+
+// --- exports ---------------------------------------------------------------
+
+// ESM default export
+export default config;
+
+// Named exports (handy helpers)
+export { buildConfigFromRaw, stripTags, htmlDecodeEntities, extractJsonString, safeParseJSON };
+
+// CommonJS interop (optional)
+try {
+  // eslint-disable-next-line no-undef
+  if (typeof module !== "undefined" && module.exports) {
+    // eslint-disable-next-line no-undef
+    module.exports = config;
+    // also expose helpers if required
+    // eslint-disable-next-line no-undef
+    module.exports.utils = { buildConfigFromRaw, stripTags, htmlDecodeEntities, extractJsonString, safeParseJSON };
+  }
+} catch (_) {}
