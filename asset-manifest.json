@@ -1,0 +1,18 @@
+{
+  "files": {
+    "main.css": "/lava-shop/static/css/main.508119a6.css",
+    "main.js": "/lava-shop/static/js/main.c602b009.js",
+    "static/media/logo.png": "/lava-shop/static/media/logo.bd2fccfca80c2004ed8a.png",
+    "static/media/reel.jpg": "/lava-shop/static/media/reel.3d9597035611edde1bab.jpg",
+    "static/media/mits.jpg": "/lava-shop/static/media/mits.91c7cb276bdd986bb4ce.jpg",
+    "index.html": "/lava-shop/index.html",
+    "static/media/kilo.jpg": "/lava-shop/static/media/kilo.bc8feeae516511173952.jpg",
+    "static/media/wel.png": "/lava-shop/static/media/wel.20e306910804f3f13bb7.png",
+    "main.508119a6.css.map": "/lava-shop/static/css/main.508119a6.css.map",
+    "main.c602b009.js.map": "/lava-shop/static/js/main.c602b009.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.508119a6.css",
+    "static/js/main.c602b009.js"
+  ]
+}
