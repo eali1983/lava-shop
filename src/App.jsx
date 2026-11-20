@@ -9,7 +9,7 @@ import reelIMG from './reel.jpg';
 import logo from './logo.png';
 import wel from './wel.png';
 
-import { Routes, Route, Link } from "react-router-dom";
+import { HashRouter, Routes, Route, Link } from "react-router-dom";
 import Shop from "./pages/Shop";
 import Category from "./pages/Category";
 
@@ -22,7 +22,7 @@ import { db } from './firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
-function App() {
+function AppContent() {
   const [products, setProducts] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,7 +34,6 @@ function App() {
   const [showCart, setShowCart] = useState(false);
   const auth = getAuth();
 
-  // Fetch products once
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -50,14 +49,12 @@ function App() {
     fetchProducts();
   }, []);
 
-  // Search filter
   useEffect(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return setFiltered(products);
     setFiltered(products.filter(p => (p.name || '').toLowerCase().includes(q)));
   }, [searchQuery, products]);
 
-  // Auth toggle
   const toggleLogin = () => {
     if (isLoggedIn) {
       signOut(auth)
@@ -83,7 +80,6 @@ function App() {
     }
   };
 
-  // Cart helpers
   const addToCart = (product) => {
     setCartItems(prev => [...prev, product]);
     setShowCart(true);
@@ -109,7 +105,6 @@ function App() {
 
   return (
     <>
-      {/* ====== NAVIGATION BAR ====== */}
       <header className="nav">
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <img src={logo} alt="Lava Logo" style={{ width: 36, height: 36, borderRadius: 8 }} />
@@ -150,9 +145,10 @@ function App() {
         </div>
       </header>
 
-      {/* ====== ROUTES ====== */}
       <Routes>
         <Route path="/" element={homeElement} />
+        <Route path="/lava-shop" element={homeElement} />
+        <Route path="/lava-shop/" element={homeElement} />
         <Route path="/shop" element={<Shop />} />
         <Route
           path="/shop/:slug"
@@ -161,7 +157,6 @@ function App() {
         <Route path="*" element={homeElement} />
       </Routes>
 
-      {/* ====== LOGIN MODAL ====== */}
       {showLoginForm && !isLoggedIn && (
         <div style={{
           position: 'fixed',
@@ -214,14 +209,20 @@ function App() {
   );
 }
 
-// ---------------- HOME COMPONENT ----------------
+function App() {
+  return (
+    <HashRouter>
+      <AppContent />
+    </HashRouter>
+  );
+}
+
 function Home({
   wel, filtered, kiloIMG, mitsIMG, reelIMG,
   addToCart, showCart, cartItems, removeFromCart, total
 }) {
   return (
     <>
-      {/* HERO SECTION */}
       <section className="hero">
         <img src={wel} alt="Welcome" style={{ width: 64, opacity: 0.85 }} />
         <h2 className="hero__title">
@@ -234,7 +235,6 @@ function Home({
         </div>
       </section>
 
-      {/* CART PANEL */}
       {showCart && (
         <div className="cart-panel">
           <h3>Your Cart</h3>
@@ -255,7 +255,6 @@ function Home({
         </div>
       )}
 
-      {/* BEST SELLERS */}
       <section className="section--dark">
         <h2>Best Sellers</h2>
         <div className="grid">
@@ -272,7 +271,6 @@ function Home({
         </div>
       </section>
 
-      {/* SERVICES & ABOUT */}
       <section id="services" className="section">
         <h2>Services</h2>
         <p>Curated cigars, vapes, kratom, hookah essentials, and friendly in-store guidance.</p>
@@ -283,7 +281,6 @@ function Home({
         <p>Lava Cigar and Smoke is your neighborhood shop in Cranberry Twp, PA for quality smoke and lounge essentials.</p>
       </section>
 
-      {/* FOOTER */}
       <footer id="contact" className="footer">
         <div className="footer__wrap">
           <div>
