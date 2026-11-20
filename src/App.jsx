@@ -92,6 +92,21 @@ function App() {
     setCartItems(prev => prev.filter((_, idx) => idx !== i));
   const total = cartItems.reduce((s, it) => s + (Number(it.price) || 0), 0).toFixed(2);
 
+  const homeElement = (
+    <Home
+      wel={wel}
+      filtered={filtered}
+      kiloIMG={kiloIMG}
+      mitsIMG={mitsIMG}
+      reelIMG={reelIMG}
+      addToCart={addToCart}
+      showCart={showCart}
+      cartItems={cartItems}
+      removeFromCart={removeFromCart}
+      total={total}
+    />
+  );
+
   return (
     <>
       {/* ====== NAVIGATION BAR ====== */}
@@ -137,28 +152,13 @@ function App() {
 
       {/* ====== ROUTES ====== */}
       <Routes>
-        <Route
-          path="/"
-          element={
-            <Home
-              wel={wel}
-              filtered={filtered}
-              kiloIMG={kiloIMG}
-              mitsIMG={mitsIMG}
-              reelIMG={reelIMG}
-              addToCart={addToCart}
-              showCart={showCart}
-              cartItems={cartItems}
-              removeFromCart={removeFromCart}
-              total={total}
-            />
-          }
-        />
+        <Route path="/" element={homeElement} />
         <Route path="/shop" element={<Shop />} />
         <Route
           path="/shop/:slug"
           element={<Category products={products} onAddToCart={addToCart} />}
         />
+        <Route path="*" element={homeElement} />
       </Routes>
 
       {/* ====== LOGIN MODAL ====== */}
@@ -272,8 +272,19 @@ function Home({
         </div>
       </section>
 
+      {/* SERVICES & ABOUT */}
+      <section id="services" className="section">
+        <h2>Services</h2>
+        <p>Curated cigars, vapes, kratom, hookah essentials, and friendly in-store guidance.</p>
+      </section>
+
+      <section id="about" className="section">
+        <h2>About Us</h2>
+        <p>Lava Cigar and Smoke is your neighborhood shop in Cranberry Twp, PA for quality smoke and lounge essentials.</p>
+      </section>
+
       {/* FOOTER */}
-      <footer className="footer">
+      <footer id="contact" className="footer">
         <div className="footer__wrap">
           <div>
             <h3>Contact</h3>
@@ -284,9 +295,9 @@ function Home({
           <div>
             <h4>Follow Us</h4>
             <div className="social-icons">
-              <a href="https://facebook.com" target="_blank"><FaFacebook /></a>
-              <a href="https://instagram.com" target="_blank"><FaInstagram /></a>
-              <a href="https://twitter.com" target="_blank"><FaTwitter /></a>
+              <a href="https://facebook.com" target="_blank" rel="noreferrer"><FaFacebook /></a>
+              <a href="https://instagram.com" target="_blank" rel="noreferrer"><FaInstagram /></a>
+              <a href="https://twitter.com" target="_blank" rel="noreferrer"><FaTwitter /></a>
             </div>
           </div>
         </div>
